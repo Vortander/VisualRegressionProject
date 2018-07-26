@@ -19,11 +19,11 @@ from torchvision import utils
 
 import matplotlib.pyplot as plt
 
-if len(sys.argv) < 4:
+if len(sys.argv) < 5:
 
 	print("**************************************************************************************************")
 	print("Usage: ")
-	print("python checkImageID_VisualRegressionAPI.py [point_ID] [path/point_list] [path/images]")
+	print("python checkImageID_VisualRegressionAPI.py [point_ID] [path/point_list] [path/images] [Sat/Street]")
 	print("**************************************************************************************************")
 
 	quit()
@@ -33,6 +33,7 @@ else:
 	idx = sys.argv[1]
 	point_list = sys.argv[2]
 	image_path = sys.argv[3]
+	sat_or_street = sys.argv[4]
 
 	batch_groups = datasets.get_point_by_id(point_list, idx)
 	if len(batch_groups) > 0: 
@@ -46,7 +47,10 @@ else:
 
 		batch_size = len(batch_groups)
 
-		imagedata = StreetImages( batch_groups, image_path, camera_views=['0','90','180','270'], resize=True, imgsize=(227, 227) )
+		if sat_or_street == "Street":
+			imagedata = StreetImages( batch_groups, image_path, camera_views=['0','90','180','270'], resize=True, imgsize=(227, 227), ext='.jpg' )
+		elif sat_or_street == "Sat":
+			imagedata = StreetImages( batch_groups, image_path, camera_views=['19','20','21','22'], resize=True, imgsize=(227, 227), ext='.png' )
 		dataloader = DataLoader( imagedata, batch_size=batch_size, shuffle=True, num_workers=8 )
 		dataiter = iter(dataloader)
 		example_batch = next(dataiter)
